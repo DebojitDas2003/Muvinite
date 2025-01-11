@@ -1,23 +1,34 @@
-import { View, StyleSheet, Image } from 'react-native';
-import Icon from './src/assets/images/icon.png'
-import Video from 'react-native-video'
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import Video from 'react-native-video';
 
 export default function SplashScreen() {
   return (
     <View style={styles.container}>
       <Video
-        source={require('./src/assets/images/video.webm')} // Replace with your video file path
-        style={styles.video}
-        resizeMode="cover" // Adjust how the video scales
-        repeat // Loop the video
-        muted // Mute the video
-        fullscreen={false} // Disable fullscreen (optional)
+        source={require('./src/assets/images/video.webm')}
+        style={styles.backgroundVideo}
+        resizeMode="contain"
+        playInBackground={false}
+        playWhenInactive={false}
       />
+
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'black' },
-  image: { width: 100, height: 100, resizeMode: 'cover' }
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgb(150,150,150)'
+  },
+  backgroundVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
 });

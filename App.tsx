@@ -1,8 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SplashScreen from './SplashScreenView';
 import HomeScreen from './src/screens/HomeScreen';
 import DetailsScreen from './src/screens/DetailsScreen';
@@ -17,7 +22,7 @@ const App: React.FC = () => {
     const timer = setTimeout(() => {
       setIsShowSplash(false);
     }, 4850);
-    return () => clearTimeout(timer); // Cleanup the timer on unmount
+    return () => clearTimeout(timer);
   }, []);
 
   const HomeStack = () => (
@@ -50,17 +55,37 @@ const App: React.FC = () => {
     </Stack.Navigator>
   );
 
+  const NetflixDarkTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      primary: '#E50914',
+      background: '#000000',
+      card: '#141414',
+      text: '#FFFFFF',
+      border: '#141414',
+    },
+  };
+
   const MainApp = () => (
-    <NavigationContainer>
-      <Tab.Navigator>
+    <NavigationContainer theme={NetflixDarkTheme}>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: {
+            backgroundColor: '#141414',
+            borderTopWidth: 0,
+          },
+          tabBarActiveTintColor: '#E50914',
+          tabBarInactiveTintColor: '#FFFFFF',
+        }}>
         <Tab.Screen
           name="Home"
           component={HomeStack}
           options={{
             headerShown: false,
             tabBarShowLabel: false,
-            tabBarIcon: ({size}) => (
-              <MaterialCommunityIcons name="home" size={size} />
+            tabBarIcon: ({color, size}) => (
+              <Icon name="home" color={color} size={size} />
             ),
           }}
         />
@@ -70,8 +95,8 @@ const App: React.FC = () => {
           options={{
             headerShown: false,
             tabBarShowLabel: false,
-            tabBarIcon: ({size}) => (
-              <MaterialCommunityIcons name="magnify" size={size} />
+            tabBarIcon: ({color, size}) => (
+              <Icon name="magnify" color={color} size={size} />
             ),
           }}
         />

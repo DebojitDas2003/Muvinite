@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -23,12 +24,7 @@ interface Show {
 
 type RootStackParamList = {
   DetailsScreen: {
-    movie: {
-      id: number;
-      name: string;
-      image: {medium: string} | null;
-      summary: string;
-    };
+    movie: Show['show'];
   };
   SearchScreen: undefined;
 };
@@ -37,6 +33,14 @@ type SearchScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'DetailsScreen'
 >;
+
+const topSearches = [
+  'All That',
+  'All Souls',
+  'All Rise',
+  'All Night',
+  'All Saints',
+];
 
 const SearchScreen: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -63,11 +67,7 @@ const SearchScreen: React.FC = () => {
   const renderMovieItem = ({item}: {item: Show}) => (
     <TouchableOpacity
       style={styles.movieCard}
-      onPress={() =>
-        navigation.navigate('DetailsScreen', {
-          movie: item.show,
-        })
-      }>
+      onPress={() => navigation.navigate('DetailsScreen', {movie: item.show})}>
       <Image
         source={{
           uri: item.show.image?.medium || 'https://via.placeholder.com/150',
@@ -86,20 +86,36 @@ const SearchScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Search Bar */}
       <View style={styles.searchBar}>
         <TextInput
           style={styles.searchInput}
           placeholder="Search for a movie..."
+          placeholderTextColor="#b0b0b0"
           value={searchTerm}
           onChangeText={setSearchTerm}
           onSubmitEditing={handleSearch}
         />
       </View>
 
-      {/* Results */}
+      <ScrollView contentContainerStyle={styles.topSearchesContainer}>
+        <Text style={styles.sectionTitle}>Top Searches</Text>
+        <View style={styles.topSearches}>
+          {topSearches.map((term, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.topSearchButton}
+              onPress={() => {
+                setSearchTerm(term);
+                handleSearch();
+              }}>
+              <Text style={styles.topSearchText}>{term}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+        <ActivityIndicator size="large" color="#fff" style={styles.loader} />
       ) : (
         <FlatList
           data={searchResults}
@@ -117,18 +133,43 @@ export default SearchScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000',
   },
   searchBar: {
     padding: 10,
-    backgroundColor: '#fff',
-    elevation: 2,
+    backgroundColor: '#1c1c1c',
   },
   searchInput: {
-    backgroundColor: '#e0e0e0',
-    borderRadius: 5,
-    padding: 10,
+    backgroundColor: '#333',
+    borderRadius: 8,
+    padding: 12,
     fontSize: 16,
+    color: '#fff',
+  },
+  topSearchesContainer: {
+    padding: 10,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  topSearches: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 40,
+  },
+  topSearchButton: {
+    backgroundColor: '#333',
+    padding: 10,
+    borderRadius: 20,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  topSearchText: {
+    color: '#fff',
   },
   loader: {
     marginTop: 20,
@@ -138,11 +179,10 @@ const styles = StyleSheet.create({
   },
   movieCard: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: '#1c1c1c',
     marginBottom: 10,
-    borderRadius: 5,
+    borderRadius: 8,
     overflow: 'hidden',
-    elevation: 2,
   },
   thumbnail: {
     width: 100,
@@ -155,10 +195,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff',
     marginBottom: 5,
   },
   summary: {
     fontSize: 14,
-    color: '#616161',
+    color: '#b0b0b0',
   },
 });
