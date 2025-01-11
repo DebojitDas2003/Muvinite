@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 interface Show {
@@ -87,40 +88,54 @@ const SearchScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.searchBar}>
+        <Icon name="search" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search for a movie..."
-          placeholderTextColor="#b0b0b0"
+          placeholder="Search for a movie or TV show"
           value={searchTerm}
-          onChangeText={setSearchTerm}
+          onChange={e => setSearchTerm(e.nativeEvent.text)}
           onSubmitEditing={handleSearch}
         />
+        {searchTerm && (
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={() => {
+              setSearchTerm('');
+              setSearchResults([]);
+            }}>
+            <Text style={styles.clearButtonText}>X</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
-      <ScrollView contentContainerStyle={styles.topSearchesContainer}>
-        <Text style={styles.sectionTitle}>Top Searches</Text>
-        <View style={styles.topSearches}>
-          {topSearches.map((term, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.topSearchButton}
-              onPress={() => {
-                setSearchTerm(term);
-                handleSearch();
-              }}>
-              <Text style={styles.topSearchText}>{term}</Text>
-            </TouchableOpacity>
-          ))}
+      {!searchResults.length && (
+        <View style={styles.topSearchesContainer}>
+          <Text style={styles.sectionTitle}>Top Searches</Text>
+          <View style={styles.topSearches}>
+            {topSearches.map((term, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.topSearchButton}
+                onPress={() => {
+                  setSearchTerm(term);
+                  handleSearch();
+                }}>
+                <Text style={styles.topSearchText}>{term}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </ScrollView>
+      )}
 
       {loading ? (
-        <ActivityIndicator size="large" color="#fff" style={styles.loader} />
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color="#ff0000" />
+        </View>
       ) : (
         <FlatList
           data={searchResults}
-          keyExtractor={item => item.show.id.toString()}
           renderItem={renderMovieItem}
+          keyExtractor={item => item.show.id.toString()}
           contentContainerStyle={styles.listContainer}
         />
       )}
@@ -134,48 +149,68 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
+    padding: 16,
   },
   searchBar: {
-    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#1c1c1c',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  searchIcon: {
+    color: '#fff',
+    fontSize: 24,
+    marginLeft: 8,
   },
   searchInput: {
+    flex: 1,
     backgroundColor: '#333',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
     color: '#fff',
+    fontSize: 16,
+    padding: 12,
+    borderRadius: 8,
+    marginLeft: 8,
+  },
+  clearButton: {
+    padding: 8,
+  },
+  clearButtonText: {
+    color: '#fff',
+    fontSize: 18,
   },
   topSearchesContainer: {
-    padding: 10,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   topSearches: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 40,
   },
   topSearchButton: {
     backgroundColor: '#333',
     padding: 10,
     borderRadius: 20,
-    marginRight: 8,
-    marginBottom: 8,
   },
   topSearchText: {
     color: '#fff',
   },
   loader: {
-    marginTop: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 200,
   },
   listContainer: {
-    padding: 10,
+    flexGrow: 1,
+    marginBottom: 40,
   },
   movieCard: {
     flexDirection: 'row',

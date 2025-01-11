@@ -37,6 +37,11 @@ const App: React.FC = () => {
         component={DetailsScreen}
         options={{headerShown: false}}
       />
+      <Stack.Screen
+        name="SearchScreen"
+        component={SearchScreen}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 

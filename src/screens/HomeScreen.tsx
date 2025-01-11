@@ -7,6 +7,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -141,72 +142,92 @@ const HomeScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <View>
-        {loading ? (
-          <ActivityIndicator size="large" color="#fff" style={styles.loader} />
-        ) : (
-          <FlatList
-            data={movies}
-            keyExtractor={item => item.show.id.toString()}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            renderItem={renderFeaturedItem}
-            ref={carouselRef}
-            onMomentumScrollEnd={event => {
-              const index = Math.round(
-                event.nativeEvent.contentOffset.x /
-                  event.nativeEvent.layoutMeasurement.width,
-              );
-              setCurrentIndex(index);
-            }}
-          />
-        )}
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View>
+          {loading ? (
+            <ActivityIndicator
+              size="large"
+              color="#fff"
+              style={styles.loader}
+            />
+          ) : (
+            <FlatList
+              data={movies}
+              keyExtractor={item => item.show.id.toString()}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              renderItem={renderFeaturedItem}
+              ref={carouselRef}
+              onMomentumScrollEnd={event => {
+                const index = Math.round(
+                  event.nativeEvent.contentOffset.x /
+                    event.nativeEvent.layoutMeasurement.width,
+                );
+                setCurrentIndex(index);
+              }}
+            />
+          )}
+        </View>
 
-      <View style={styles.rowsContainer}>
-        <Text style={styles.rowTitle}>Trending Now</Text>
-        {loading ? (
-          <ActivityIndicator size="large" color="#fff" style={styles.loader} />
-        ) : (
-          <FlatList
-            data={movies}
-            keyExtractor={item => item.show.id.toString()}
-            horizontal
-            renderItem={renderMovieItem}
-            contentContainerStyle={styles.rowList}
-            showsHorizontalScrollIndicator={false}
-          />
-        )}
+        <View style={styles.rowsContainer}>
+          <Text style={styles.rowTitle}>Trending Now</Text>
+          {loading ? (
+            <ActivityIndicator
+              size="large"
+              color="#fff"
+              style={styles.loader}
+            />
+          ) : (
+            <FlatList
+              data={movies}
+              keyExtractor={item => item.show.id.toString()}
+              horizontal
+              renderItem={renderMovieItem}
+              contentContainerStyle={styles.rowList}
+              showsHorizontalScrollIndicator={false}
+            />
+          )}
 
-        <Text style={styles.rowTitle}>Must Watch</Text>
-        {loading ? (
-          <ActivityIndicator size="large" color="#fff" style={styles.loader} />
-        ) : (
-          <FlatList
-            data={shuffleMovies(movies)}
-            keyExtractor={item => item.show.id.toString()}
-            horizontal
-            renderItem={renderMovieItem}
-            contentContainerStyle={styles.rowList}
-            showsHorizontalScrollIndicator={false}
-          />
-        )}
+          <Text style={styles.rowTitle}>Must Watch</Text>
+          {loading ? (
+            <ActivityIndicator
+              size="large"
+              color="#fff"
+              style={styles.loader}
+            />
+          ) : (
+            <FlatList
+              data={movies
+                .slice()
+                .sort((a, b) => a.show.name.localeCompare(b.show.name))} // Sort alphabetically by name
+              keyExtractor={item => item.show.id.toString()}
+              horizontal
+              renderItem={renderMovieItem}
+              contentContainerStyle={styles.rowList}
+              showsHorizontalScrollIndicator={false}
+            />
+          )}
 
-        <Text style={styles.rowTitle}>Movies You May Have Heard Of</Text>
-        {loading ? (
-          <ActivityIndicator size="large" color="#fff" style={styles.loader} />
-        ) : (
-          <FlatList
-            data={shuffleMovies(movies)}
-            keyExtractor={item => item.show.id.toString()}
-            horizontal
-            renderItem={renderMovieItem}
-            contentContainerStyle={styles.rowList}
-            showsHorizontalScrollIndicator={false}
-          />
-        )}
-      </View>
+          <Text style={styles.rowTitle}>Movies You May Have Heard Of</Text>
+          {loading ? (
+            <ActivityIndicator
+              size="large"
+              color="#fff"
+              style={styles.loader}
+            />
+          ) : (
+            <FlatList
+              data={movies.slice().sort((a, b) => b.show.id - a.show.id)} // Sort by ID in descending order
+              keyExtractor={item => item.show.id.toString()}
+              horizontal
+              renderItem={renderMovieItem}
+              contentContainerStyle={styles.rowList}
+              showsHorizontalScrollIndicator={false}
+            />
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -215,6 +236,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
+  },
+  scrollContainer: {
+    flexGrow: 1,
   },
   header: {
     height: 60,
