@@ -33,7 +33,6 @@ type RootStackParamList = {
 };
 
 const DetailsScreen: React.FC = () => {
-  const placeHolder = require('../assets/images/icon.png');
   const route = useRoute<RouteProp<RouteParams, 'DetailsScreen'>>();
   const {movie} = route.params;
 
@@ -42,7 +41,7 @@ const DetailsScreen: React.FC = () => {
       {/* Movie Image */}
       <Image
         source={{
-          uri: movie.image?.original || placeHolder,
+          uri: movie.image?.original || 'https://via.placeholder.co',
         }}
         style={styles.image}
       />

@@ -1,24 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import {View, Text} from 'react-native';
+import React from 'react';
+import 'react-native-gesture-handler';
 import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
+import HomeScreen from './HomeScreen';
+import DetailsScreen from './DetailsScreen';
+import SearchScreen from './SearchScreen';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import SplashScreen from './SplashScreenView';
-import HomeScreen from './src/screens/HomeScreen';
-import DetailsScreen from './src/screens/DetailsScreen';
-import SearchScreen from './src/screens/SearchScreen';
 
-const App: React.FC = () => {
-  const [isShowSplash, setIsShowSplash] = useState(true);
+const _layout: React.FC = () => {
   const Stack = createStackNavigator();
   const Tab = createBottomTabNavigator();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsShowSplash(false);
-    }, 4850);
-    return () => clearTimeout(timer); // Cleanup the timer on unmount
-  }, []);
 
   const HomeStack = () => (
     <Stack.Navigator>
@@ -30,6 +23,11 @@ const App: React.FC = () => {
       <Stack.Screen
         name="DetailsScreen"
         component={DetailsScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SearchScreen"
+        component={SearchScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
@@ -50,7 +48,7 @@ const App: React.FC = () => {
     </Stack.Navigator>
   );
 
-  const MainApp = () => (
+  return (
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen
@@ -78,8 +76,6 @@ const App: React.FC = () => {
       </Tab.Navigator>
     </NavigationContainer>
   );
-
-  return <>{isShowSplash ? <SplashScreen /> : <MainApp />}</>;
 };
 
-export default App;
+export default _layout;
